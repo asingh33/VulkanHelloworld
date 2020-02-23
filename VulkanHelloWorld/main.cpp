@@ -6,17 +6,22 @@
 //  Copyright © 2020 Abhishek Singh. All rights reserved.
 //
 
-#include <iostream>
-#include <vulkan/vulkan.h>
+//#include <iostream>
+//#include <vulkan/vulkan.h>
+#include "Renderer.h"
+
+
 
 int main(int argc, const char * argv[]) {
-    VkInstance instance;
-    VkResult result;
-    VkInstanceCreateInfo info = {};
-
-    result = vkCreateInstance(&info, NULL, &instance);
-    std::cout << "vkCreateInstance result: " << result  << "\n";
-
-    vkDestroyInstance(instance, nullptr);
+    
+    //Renderer r;
+    
+    std::unique_ptr<Renderer> vrenderer = std::make_unique<Renderer>();
+    
+    
+    
     return 0;
 }
+
+
+
