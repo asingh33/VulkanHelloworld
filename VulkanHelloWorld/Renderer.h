@@ -16,12 +16,11 @@
 class Renderer
 {
 private:
-    VkPhysicalDevice _gpuDevice = nullptr;
-    VkDevice    _device = nullptr;
+    VkPhysicalDevice    mGPUDevice = nullptr;
+    VkDevice            mDevice = nullptr;
 
 public:
-    VkInstance _instance;
-    bool _bInstanceCreated = false;
+    VkInstance          mInstance = nullptr;
     
     Renderer();
     ~Renderer();
@@ -44,7 +43,7 @@ Renderer::Renderer()
         info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
         info.pApplicationInfo = &appinfo;
         
-        result = vkCreateInstance(&info, NULL, &_instance);
+        result = vkCreateInstance(&info, NULL, &mInstance);
         
         if( result == VK_ERROR_INCOMPATIBLE_DRIVER)
         {
@@ -57,7 +56,6 @@ Renderer::Renderer()
             return;
         }
         else{
-            _bInstanceCreated = true;
             std::cout << "Vulkan is supported. Created the instance. \n";
         }
     }
@@ -66,12 +64,12 @@ Renderer::Renderer()
     {
         uint32_t gpucount = 0;
         
-        result = vkEnumeratePhysicalDevices(_instance, &gpucount, NULL);
+        result = vkEnumeratePhysicalDevices(mInstance, &gpucount, NULL);
         std::vector<VkPhysicalDevice> devicelist(gpucount);
-        result = vkEnumeratePhysicalDevices(_instance, &gpucount, devicelist.data());
+        result = vkEnumeratePhysicalDevices(mInstance, &gpucount, devicelist.data());
         
         // Default choosing the first one.
-        _gpuDevice = devicelist[0];
+        mGPUDevice = devicelist[0];
         
         // Similarly we can enumerate Instance & Device layer properties
         {
@@ -89,9 +87,9 @@ Renderer::Renderer()
             }
             {
                 propcount = 0;
-                vkEnumerateDeviceLayerProperties(_gpuDevice, &propcount, nullptr);
+                vkEnumerateDeviceLayerProperties(mGPUDevice, &propcount, nullptr);
                 std::vector<VkLayerProperties> layerprop(propcount);
-                vkEnumerateDeviceLayerProperties(_gpuDevice, &propcount, layerprop.data());
+                vkEnumerateDeviceLayerProperties(mGPUDevice, &propcount, layerprop.data());
                 std::cout<< "Device layers:\n";
                 for(auto &i: layerprop)
                 {
@@ -119,7 +117,7 @@ Renderer::Renderer()
         
         //const VkAllocationCallbacks allocator = {};
         
-        result = vkCreateDevice(_gpuDevice, &device_info, nullptr, &_device);
+        result = vkCreateDevice(mGPUDevice, &device_info, nullptr, &mDevice);
         
         if( result == VK_SUCCESS)
         {
@@ -131,15 +129,15 @@ Renderer::Renderer()
 
 Renderer::~Renderer()
 {
-    if( _device )
+    if( mDevice )
     {
-        vkDestroyDevice(_device, NULL);
+        vkDestroyDevice(mDevice, NULL);
         std::cout << "Destroyed the Vulkan device.\n";
     }
     
-    if( _instance )
+    if( mInstance )
     {
-        vkDestroyInstance(_instance, NULL);
+        vkDestroyInstance(mInstance, NULL);
         std::cout << "Destroyed the Vulkan instance.\n";
     }
 }
